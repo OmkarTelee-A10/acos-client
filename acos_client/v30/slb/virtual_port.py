@@ -81,6 +81,7 @@ class VirtualPort(base.BaseV30):
         autosnat=False,
         ipinip=False,
         source_nat_pool=None,
+        virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
         exclude_minimize=None,
@@ -132,6 +133,12 @@ class VirtualPort(base.BaseV30):
         if no_dest_nat is not None:
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
 
+        if virtual_port_templates:
+            virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
+            params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
+            params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
+            params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
+
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
             url += self.url_port_tmpl.format(
@@ -153,6 +160,7 @@ class VirtualPort(base.BaseV30):
         autosnat=False,
         ipinip=False,
         no_dest_nat=None,
+        virtual_port_templates=None,
         source_nat_pool=None,
         tcp_template=None,
         udp_template=None,
@@ -172,6 +180,7 @@ class VirtualPort(base.BaseV30):
             ipinip=ipinip,
             no_dest_nat=no_dest_nat,
             source_nat_pool=source_nat_pool,
+            virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
             udp_template=udp_template,
             **kwargs
@@ -191,6 +200,7 @@ class VirtualPort(base.BaseV30):
         ipinip=False,
         no_dest_nat=None,
         source_nat_pool=None,
+        virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -214,6 +224,7 @@ class VirtualPort(base.BaseV30):
                 autosnat,
                 ipinip,
                 no_dest_nat,
+                virtual_port_templates,
                 source_nat_pool,
                 tcp_template,
                 udp_template,
@@ -234,6 +245,7 @@ class VirtualPort(base.BaseV30):
                 autosnat,
                 ipinip,
                 no_dest_nat,
+                virtual_port_templates,
                 source_nat_pool,
                 tcp_template,
                 udp_template,
