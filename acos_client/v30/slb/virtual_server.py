@@ -51,8 +51,10 @@ class VirtualServer(base.BaseV30):
 
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
+
         if template_virtual_server:
             params['virtual-server']['template-virtual-server'] = str(template_virtual_server)
+
         if virtual_server_templates:
 
             virtual_server_templates = {k: v for k, v in virtual_server_templates.items() if v}
@@ -80,7 +82,7 @@ class VirtualServer(base.BaseV30):
 
         return self._set(name, ip_address, arp_disable, virtual_server_templates, vrid, template_virtual_server, **kwargs)
 
-    def update(self, name, ip_address=None, arp_disable=False, vrid=None, template_virtual_server=None, **kwargs):
+    def update(self, name, ip_address=None, arp_disable=False, virtual_server_templates=None, vrid=None, template_virtual_server=None, **kwargs):
         return self._set(name, ip_address, arp_disable, virtual_server_templates, vrid, template_virtual_server, update=True, **kwargs)
 
     def delete(self, name):

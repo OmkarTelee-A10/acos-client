@@ -121,6 +121,113 @@ class TestVirtualPort(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
+
+    @responses.activate
+    def test_virtual_port_create_with_templates(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'response': {'status': 'OK'}}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'port':
+            {
+                'auto': 1,
+                'extended-stats': 1,
+                'ipinip': 1,
+                'name': 'test1_VPORT',
+                'pool': 'test_nat_pool',
+                'port-number': 80,
+                'protocol': 'http',
+                'service-group': 'pool1',
+                'tcp_template': 'test_tcp_template',
+                'template-persist-cookie': 'test_c_pers_template',
+                'template-persist-source-ip': 'test_s_pers_template',
+                'udp_template': 'test_udp_template',
+                'template-virtual-port':'template_vp',
+                'template-tcp':'template_tcp',
+                'template-policy':'template_pl',
+            }
+        }
+
+        resp = self.client.slb.virtual_server.vport.create(
+            virtual_server_name=VSERVER_NAME,
+            name='test1_VPORT',
+            protocol=self.client.slb.virtual_server.vport.HTTP,
+            port='80',
+            service_group_name='pool1',
+            s_pers_name="test_s_pers_template",
+            c_pers_name="test_c_pers_template",
+            status=1,
+            autosnat=True,
+            ipinip=True,
+            source_nat_pool="test_nat_pool",
+            tcp_template="test_tcp_template",
+            udp_template="test_udp_template",
+            virtual_port_templates={
+            'template-virtual-port':'template_vp',
+            'template-tcp':'template_tcp',
+            'template-policy':'template_pl',
+            },
+        )
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
+    def test_virtual_port_create_with_partial_templates(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'response': {'status': 'OK'}}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'port':
+            {
+                'auto': 1,
+                'extended-stats': 1,
+                'ipinip': 1,
+                'name': 'test1_VPORT',
+                'pool': 'test_nat_pool',
+                'port-number': 80,
+                'protocol': 'http',
+                'service-group': 'pool1',
+                'tcp_template': 'test_tcp_template',
+                'template-persist-cookie': 'test_c_pers_template',
+                'template-persist-source-ip': 'test_s_pers_template',
+                'udp_template': 'test_udp_template',
+                'template-virtual-port':'template_vp',
+                'template-tcp':None,
+                'template-policy':None,
+            }
+        }
+
+        resp = self.client.slb.virtual_server.vport.create(
+            virtual_server_name=VSERVER_NAME,
+            name='test1_VPORT',
+            protocol=self.client.slb.virtual_server.vport.HTTP,
+            port='80',
+            service_group_name='pool1',
+            s_pers_name="test_s_pers_template",
+            c_pers_name="test_c_pers_template",
+            status=1,
+            autosnat=True,
+            ipinip=True,
+            source_nat_pool="test_nat_pool",
+            tcp_template="test_tcp_template",
+            udp_template="test_udp_template",
+            virtual_port_templates={
+            'template-virtual-port':'template_vp'
+            },
+        )
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+
+
     @responses.activate
     def test_virtual_port_create_already_exists(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -156,7 +263,6 @@ class TestVirtualPort(unittest.TestCase):
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
                 "extended-stats": 1,
-                "no-dest-nat": 0
             }
         }
 
@@ -191,6 +297,7 @@ class TestVirtualPort(unittest.TestCase):
                 'service-group': 'pool1',
                 'ha-conn-mirror': 1,
                 'conn-limit': 50000,
+                'ipinip': 1,
                 'tcp_template': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
