@@ -56,7 +56,6 @@ class VirtualServer(base.BaseV30):
             params['virtual-server']['template-virtual-server'] = str(template_virtual_server)
 
         if virtual_server_templates:
-
             virtual_server_templates = {k: v for k, v in virtual_server_templates.items() if v}
             params['virtual-server']['template-virtual-server'] = virtual_server_templates.get('template-virtual-server', None)
             params['virtual-server']['template-logging'] = virtual_server_templates.get('template-logging', None)

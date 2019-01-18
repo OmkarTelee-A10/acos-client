@@ -146,6 +146,12 @@ class VirtualPort(base.BaseV30):
             params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
             params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
 
+        if virtual_port_templates:
+            virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
+            params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
+            params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
+            params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
+
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
             url += self.url_port_tmpl.format(
@@ -257,11 +263,9 @@ class VirtualPort(base.BaseV30):
                 s_pers_name,
                 c_pers_name,
                 status,
-                autosnat,
-                ipinip,
-		no_dest_nat=no_dest_nat,
                 autosnat=autosnat,
                 ipinip=ipinip,
+                no_dest_nat=no_dest_nat,
                 virtual_port_templates=virtual_port_templates,
                 source_nat_pool=source_nat_pool,
                 tcp_template=tcp_template,
